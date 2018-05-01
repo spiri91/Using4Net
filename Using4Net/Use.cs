@@ -5,7 +5,7 @@ namespace Using4Net
 {
     public static class While
     {
-        public static void Using(IDisposable[] disposable, Action action)
+        public static void Using(IDisposable[] disposable, Action action, Action<Exception> onErrorOccurred = null)
         {
             try
             {
@@ -13,16 +13,17 @@ namespace Using4Net
             }
             catch (Exception ex)
             {
-                throw ex;
+                onErrorOccurred?.Invoke(ex);
             }
             finally
             {
                 foreach (var _disposable in disposable)
-                    _disposable.Dispose();
+                    if (null != _disposable)
+                        _disposable.Dispose();
             }
         }
 
-        public static void Using(IDisposable[] disposable, Action action, uint retries)
+        public static void Using(IDisposable[] disposable, Action action, uint retries, Action<Exception> onErrorOccurred = null)
         {
             int _try = 0;
 
@@ -35,37 +36,21 @@ namespace Using4Net
                 catch (Exception ex)
                 {
                     if (_try == retries - 1)
-                        throw ex;
+                        onErrorOccurred?.Invoke(ex);
                 }
                 finally
                 {
                     if (_try == retries - 1)
                         foreach (var _disposable in disposable)
-                            _disposable.Dispose();
+                            if (null != _disposable)
+                                _disposable.Dispose();
 
                     _try++;
                 }
             }
         }
 
-        public static void Using(IDisposable[] disposable, Action action, Action<Exception> onErrorOccurred)
-        {
-            try
-            {
-                action();
-            }
-            catch (Exception ex)
-            {
-                onErrorOccurred(ex);
-            }
-            finally
-            {
-                foreach (var _disposable in disposable)
-                    _disposable.Dispose();
-            }
-        }
-
-        public static void Using(IDisposable[] disposable, Action action, uint retries, TimeSpan waitTimeSpanBetweenTries)
+        public static void Using(IDisposable[] disposable, Action action, uint retries, TimeSpan waitTimeSpanBetweenTries, Action<Exception> onErrorOccurred = null)
         {
             int _try = 0;
             bool errorOccurred = true;
@@ -83,7 +68,7 @@ namespace Using4Net
                 catch (Exception ex)
                 {
                     if (_try == retries - 1)
-                        throw ex;
+                        onErrorOccurred?.Invoke(ex);
 
                     Thread.Sleep(waitTimeSpanBetweenTries);
                 }
@@ -91,7 +76,8 @@ namespace Using4Net
                 {
                     if (_try == retries - 1 || false == errorOccurred)
                         foreach (var _disposable in disposable)
-                            _disposable.Dispose();
+                            if (null != _disposable)
+                                _disposable.Dispose();
 
                     _try++;
                 }
