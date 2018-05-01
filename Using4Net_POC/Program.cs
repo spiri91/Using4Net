@@ -24,7 +24,11 @@ namespace Using4Net_POC
             var b = new MySpecialClass();
             var c = new MySpecialClass();
 
-            While.Using(new MySpecialClass[] { a, b, c }, () => { a.WriteSomething(); b.WriteSomething(); c.WriteSomething(); });
+            While.Using(new MySpecialClass[] { a, b, c }, () => { a.WriteSomething(); b.WriteSomething(); c.WriteSomething(); }, 3);
+
+            While.Using(new MySpecialClass[] { a, b, c }, () => { a.WriteSomething(); b.WriteSomething(); c.WriteSomething(); throw new Exception(); }, (ex) => { Console.WriteLine(ex); });
+
+            While.Using(new MySpecialClass[] { a, b, c }, () => { a.WriteSomething(); b.WriteSomething(); c.WriteSomething(); throw new Exception(); }, 3, TimeSpan.FromSeconds(3));
 
             Console.ReadKey();
         }

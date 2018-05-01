@@ -36,14 +36,14 @@ namespace Using4Net
                 {
                     if (_try == retries - 1)
                         throw ex;
-
-                    _try++;
                 }
                 finally
                 {
                     if (_try == retries - 1)
                         foreach (var _disposable in disposable)
                             _disposable.Dispose();
+
+                    _try++;
                 }
             }
         }
@@ -86,14 +86,14 @@ namespace Using4Net
                         throw ex;
 
                     Thread.Sleep(waitTimeSpanBetweenTries);
-
-                    _try++;
                 }
                 finally
                 {
                     if (_try == retries - 1 || false == errorOccurred)
                         foreach (var _disposable in disposable)
                             _disposable.Dispose();
+
+                    _try++;
                 }
             }
         }
